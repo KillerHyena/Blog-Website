@@ -1,0 +1,78 @@
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --color-bg: #1c1c1c;
+  --color-text: #f5f5f5;
+  --color-accent: #3c1361;
+  --color-highlight: #9b1c31;
+  --color-muted: #a1a1aa;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+  transition: background 0.6s ease, color 0.6s ease;
+  line-height: 1.6;
+}
+
+/* Gothic Headers */
+h1, h2, h3, h4 {
+  font-family: 'Cinzel Decorative', serif;
+  letter-spacing: 1px;
+  color: var(--color-accent);
+}
+
+/* Links */
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-highlight);
+  text-shadow: 0 0 6px var(--color-highlight);
+}
+
+/* Buttons */
+button {
+  background: var(--color-accent);
+  color: var(--color-text);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+button:hover {
+  background: var(--color-highlight);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--color-highlight);
+}
+
+/* Fade-in animation */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Parallax effect for backgrounds */
+.parallax {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
