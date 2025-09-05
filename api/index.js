@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import { fileURLToPath } from 'url'; // Add this import
 import { PrismaClient } from '@prisma/client';
 
 import userRoutes from './routes/user.route.js';
@@ -12,7 +13,10 @@ import commentRoutes from './routes/comment.route.js';
 dotenv.config();
 const prisma = new PrismaClient();
 const app = express();
-const __dirname = path.resolve();
+
+// ✅ Get correct directory name using import.meta.url
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ✅ Connect to PostgreSQL with Prisma
 (async () => {
@@ -35,10 +39,34 @@ app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 
 // ✅ Serve frontend (for production build)
-app.use(express.static(path.join(__dirname, '/client/dist')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-});
+// Only serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  const clientDistPath = path.join(__dirname, '../client/dist');
+  
+  // Check if the dist directory exists
+  import('fs').then(fs => {
+    if (fs.existsSync(clientDistPath)) {
+      app.use(express.static(clientDistPath));
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(clientDistPath, 'index.html'));
+      });
+      console.log('✅ Serving static files from:', clientDistPath);
+    } else {
+      console.warn('⚠️  Client dist directory not found:', clientDistPath);
+      console.warn('⚠️  Run "npm run build" in the client directory first');
+    }
+  }).catch(err => {
+    console.error('❌ Error checking client dist directory:', err);
+  });
+} else {
+  // In development, just provide a message
+  app.get('*', (req, res) => {
+    res.json({
+      message: 'In development mode. Run the React dev server separately.',
+      clientUrl: 'http://localhost:5173' // Default Vite port
+    });
+  });
+}
 
 // ✅ Error handling
 app.use((err, req, res, next) => {
@@ -55,4 +83,5 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`📁 Current directory: ${__dirname}`);
 });
